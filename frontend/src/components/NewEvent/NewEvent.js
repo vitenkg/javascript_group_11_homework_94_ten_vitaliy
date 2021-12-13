@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Container, Grid, makeStyles, TextField} from "@material-ui/core";
-import FormElement from "../../components/Form/FormElement";
-import ButtonWithProgress from "../../components/UI/AppToolbar/ButtonWithProgress/ButtonWithProgress";
+import FormElement from "../Form/FormElement";
+import ButtonWithProgress from "../UI/AppToolbar/ButtonWithProgress/ButtonWithProgress";
 
 const useStyles = makeStyles(theme => ({
     paper: {

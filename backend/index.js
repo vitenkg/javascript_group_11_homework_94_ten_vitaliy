@@ -6,6 +6,7 @@ const exitHook = require('async-exit-hook');
 const config = require('./config');
 const Users = require('./app/users');
 const Events = require("./app/events");
+const Subscription = require("./app/subscription");
 
 
 const app = express();
@@ -17,6 +18,7 @@ require('express-ws')(app);
 const port = 8000;
 
 app.use('/users', Users);
+app.ws('/subscriptions', Subscription);
 app.ws('/events', Events);
 
 

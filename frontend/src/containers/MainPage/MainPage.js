@@ -3,7 +3,7 @@ import {useDispatch, useSelector} from "react-redux";
 import ReconnectingWebSocket from "reconnecting-websocket";
 import {Button, Grid, Paper} from "@material-ui/core";
 import {addNewEvent, deleteEvent, userConnected} from "../../store/actions/eventsActions";
-import NewEvent from "../NewEvent/NewEvent";
+import NewEvent from "../../components/NewEvent/NewEvent";
 
 const MainPage = () => {
     const dispatch = useDispatch();
@@ -13,7 +13,7 @@ const MainPage = () => {
     const user = useSelector(state => state.users.user);
 
     useEffect(() => {
-        ws.current = new ReconnectingWebSocket('ws://localhost:8000/events?token=' + user.token);
+        ws.current = new WebSocket('ws://localhost:8000/events?token=' + user.token);
         ws.current.onclose = () => {
             console.log('ws connected close');
             dispatch({type: 'CLEAR_USERS'});

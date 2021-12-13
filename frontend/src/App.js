@@ -4,7 +4,7 @@ import Register from "./containers/Register/Register";
 import Login from "./containers/Login/Login";
 import {useSelector} from "react-redux";
 import MainPage from "./containers/MainPage/MainPage";
-import NewEvent from "./containers/NewEvent/NewEvent";
+import Subscribe from "./containers/Subscribe/Subscribe";
 
 const App = () => {
   const user = useSelector(state => state.users.user);
@@ -25,7 +25,7 @@ const App = () => {
           isAllowed={user}
           redirectTo="/login"
         />
-        <Route path="/new" component={NewEvent}/>
+        <Route path="/subscribe" component={Subscribe}/>
         <Route path="/register" component={Register}/>
         <Route path="/login" component={Login}/>
       </Switch>

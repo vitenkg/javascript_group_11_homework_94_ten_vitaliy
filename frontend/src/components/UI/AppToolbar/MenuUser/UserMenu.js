@@ -32,7 +32,7 @@ const UserMenu = ({user}) => {
             >
                 <MenuItem>Profile</MenuItem>
                 <MenuItem>My account</MenuItem>
-                <MenuItem component={Link} to="/new">ADD new Event</MenuItem>
+                <MenuItem component={Link} to="/Subscribe">Subscriptions</MenuItem>
                 <MenuItem onClick={() => dispatch(logoutUserRequest(user))}>Logout</MenuItem>
             </Menu>
         </>);

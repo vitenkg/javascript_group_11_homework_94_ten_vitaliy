@@ -6,10 +6,10 @@ const SubscriptionSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
     },
-    subscriptionUser: {
+    subscriptionUser: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-    }
+    }]
 });
 
 SubscriptionSchema.plugin(idvalidator);

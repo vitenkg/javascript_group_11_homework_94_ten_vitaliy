@@ -8,10 +8,12 @@ import createSagaMiddleware from "redux-saga";
 import {rootSagas} from "./rootSagas";
 import usersSlice from "./slices/usersSlice";
 import eventsSlice from "./slices/eventsSlice";
+import subscribeSlice from "./slices/subscribeSlice";
 
 const rootReducer = combineReducers({
   'users': usersSlice.reducer,
   'event': eventsSlice.reducer,
+  'subscribe': subscribeSlice.reducer,
 });
 
 const persistedState = loadFromLocalStorage();

@@ -55,7 +55,7 @@ const userDisconnected = (user) => {
 };
 
 const newEvent = async (parsed, user) => {
-    console.log('new: ', parsed.event);
+
     const date = new Date()
     const newEvent = {
         datetime: parsed.event.datetime || date,
@@ -64,8 +64,7 @@ const newEvent = async (parsed, user) => {
         user: user._id,
     };
 
-    console.log('new Event', newEvent);
-
+try {
     const event = new Event(newEvent);
     await event.save();
 
@@ -76,12 +75,15 @@ const newEvent = async (parsed, user) => {
             {lasting: parsed.event.lasting},
             {user: user._id},
         ]
-    }).populate('user', 'displayName');
+    }).populate('user', 'displayName _id');
 
     activeConnections[user.id].send(JSON.stringify({
         type: 'NEW_EVENT',
         payload: savedEvent,
     }));
+} catch (e) {
+    console.log(e)
+}
 
     return;
 };
@@ -96,6 +98,8 @@ const Events = async (ws, req) => {
         }
 
         const user = await User.findOne({token});
+
+        console.log('Проверка соединения', user);
 
         if (!user) {
             console.log('User nof found')
