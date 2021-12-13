@@ -58,7 +58,7 @@ const newEvent = async (parsed, user) => {
     console.log('new: ', parsed.event);
     const date = new Date()
     const newEvent = {
-        datetime: date,
+        datetime: parsed.event.datetime || date,
         event: parsed.event.event,
         lasting: parsed.event.lasting,
         user: user._id,
@@ -69,7 +69,14 @@ const newEvent = async (parsed, user) => {
     const event = new Event(newEvent);
     await event.save();
 
-    const savedEvent = await Event.findOne({datetime: date}).populate('user', 'displayName');
+    const savedEvent = await Event.findOne({
+        $and: [
+            {datetime: parsed.event.datetime},
+            {event: parsed.event.event},
+            {lasting: parsed.event.lasting},
+            {user: user._id},
+        ]
+    }).populate('user', 'displayName');
 
     activeConnections[user.id].send(JSON.stringify({
         type: 'NEW_EVENT',

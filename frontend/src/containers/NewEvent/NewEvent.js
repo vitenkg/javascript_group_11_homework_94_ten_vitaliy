@@ -1,9 +1,7 @@
-import React, {useRef, useState} from 'react';
-import {useDispatch} from "react-redux";
-import {Container, Grid, makeStyles} from "@material-ui/core";
+import React, {useState} from 'react';
+import {Container, Grid, makeStyles, TextField} from "@material-ui/core";
 import FormElement from "../../components/Form/FormElement";
 import ButtonWithProgress from "../../components/UI/AppToolbar/ButtonWithProgress/ButtonWithProgress";
-import {loginUserRequest} from "../../store/actions/usersActions";
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -28,6 +26,7 @@ const NewEvent = ({onSubmit}) => {
     const [event, setEvent] = useState({
         event: '',
         lasting: '',
+        datetime: '',
     });
 
     const inputChangeHandler = e => {
@@ -68,6 +67,13 @@ const NewEvent = ({onSubmit}) => {
                         label="Lasting"
                         name="lasting"
                         value={event.lasting}
+                        onChange={inputChangeHandler}
+                    />
+
+                    <TextField
+                        type="date"
+                        name="datetime"
+                        value={event.datetime}
                         onChange={inputChangeHandler}
                     />
 

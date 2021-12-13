@@ -2,7 +2,6 @@ import React, {useEffect, useRef} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import ReconnectingWebSocket from "reconnecting-websocket";
 import {Button, Grid, Paper} from "@material-ui/core";
-import dayjs from "dayjs";
 import {addNewEvent, deleteEvent, userConnected} from "../../store/actions/eventsActions";
 import NewEvent from "../NewEvent/NewEvent";
 
@@ -22,6 +21,7 @@ const MainPage = () => {
 
         ws.current.onmessage = event => {
             const parsed = JSON.parse(event.data);
+            console.log(parsed);
 
             if (parsed.type === 'USER_CONNECTED') {
                 dispatch(userConnected(parsed.payload));
@@ -32,7 +32,7 @@ const MainPage = () => {
             }
 
             if (parsed.type === 'NEW_EVENT') {
-
+                console.log(parsed.payload);
                 dispatch(addNewEvent(parsed.payload));
             }
 
@@ -65,7 +65,7 @@ const MainPage = () => {
                 <Paper key={event._id}>
                     <Grid>
                         <p>Event Calendar: <b>{event.event}</b></p>
-                        <p>lasting: <b>{event.lasting}</b> || date: <b>{dayjs(event.datetime).format('DD.MM.YYYY')}</b></p>
+                        <p>lasting: <b>{event.lasting}</b> || date: <b>{event.datetime}</b></p>
                     </Grid>
                     <Button
                         color="primary"

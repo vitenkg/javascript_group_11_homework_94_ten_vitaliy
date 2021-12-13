@@ -19,6 +19,13 @@ const eventsSlice = createSlice({
         },
         addNewEvent(state, action) {
             state.events = [...state.events, action.payload];
+            state.events = state.events.sort(function(a,b) {
+                if ( a.datetime < b.datetime )
+                    return 1;
+                if ( a.datetime > b.datetime )
+                    return -1;
+                return 0;
+            })
         }
 
     },
