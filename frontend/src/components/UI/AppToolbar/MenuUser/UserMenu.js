@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {Button, Menu, MenuItem} from "@material-ui/core";
 import {useDispatch, useSelector} from "react-redux";
 import {logoutUserRequest} from "../../../../store/actions/usersActions";
+import {Link} from "react-router-dom";
 
 const UserMenu = ({user}) => {
     const dispatch = useDispatch();
@@ -31,6 +32,7 @@ const UserMenu = ({user}) => {
             >
                 <MenuItem>Profile</MenuItem>
                 <MenuItem>My account</MenuItem>
+                <MenuItem component={Link} to="/new">ADD new Event</MenuItem>
                 <MenuItem onClick={() => dispatch(logoutUserRequest(user))}>Logout</MenuItem>
             </Menu>
         </>);

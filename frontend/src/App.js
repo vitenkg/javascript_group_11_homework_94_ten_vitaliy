@@ -3,6 +3,8 @@ import {Redirect, Route, Switch} from "react-router-dom";
 import Register from "./containers/Register/Register";
 import Login from "./containers/Login/Login";
 import {useSelector} from "react-redux";
+import MainPage from "./containers/MainPage/MainPage";
+import NewEvent from "./containers/NewEvent/NewEvent";
 
 const App = () => {
   const user = useSelector(state => state.users.user);
@@ -16,13 +18,14 @@ const App = () => {
   return (
     <Layout>
       <Switch>
-        <Route path="/" exact component={Register}/>
-        {/*<ProtectedRoute*/}
-        {/*  path="/"*/}
-        {/*  component={}*/}
-        {/*  isAllowed={user?.role === 'admin'}*/}
-        {/*  redirectTo="/login"*/}
-        {/*/>*/}
+        <ProtectedRoute
+          path="/"
+          exact
+          component={MainPage}
+          isAllowed={user}
+          redirectTo="/login"
+        />
+        <Route path="/new" component={NewEvent}/>
         <Route path="/register" component={Register}/>
         <Route path="/login" component={Login}/>
       </Switch>
