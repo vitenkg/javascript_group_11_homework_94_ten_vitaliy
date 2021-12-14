@@ -6,7 +6,7 @@ import ButtonWithProgress from "../../components/UI/AppToolbar/ButtonWithProgres
 import ReconnectingWebSocket from "reconnecting-websocket";
 import {toast} from "react-toastify";
 import {addNewSubscribe, userConnectedSub} from "../../store/actions/subscribeActions";
-import {userConnected} from "../../store/actions/eventsActions";
+import AppDrawer from "../../components/UI/AppDrawer/AppDrawer";
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -36,7 +36,7 @@ const Subscribe = () => {
     const classes = useStyles();
     const ws = useRef(null);
     const user = useSelector(state => state.users.user);
-
+    const subscribeEvents = useSelector(state => state.subscribe.eventsUsers);
 
     const [email, setEmail] = useState('');
 
@@ -53,12 +53,11 @@ const Subscribe = () => {
             console.log(parsed);
 
             if (parsed.type === 'USER_CONNECTED') {
-                console.log(parsed.payload);
                 dispatch(userConnectedSub(parsed.payload));
             }
 
             if (parsed.type === 'NO_USER') {
-                toast.success(parsed.message);
+                toast.error(parsed.payload);
             }
 
             if (parsed.type === 'NEW_SUBSCRIBE') {
@@ -85,7 +84,6 @@ const Subscribe = () => {
 
     const subscribeFormHandler = e => {
         e.preventDefault();
-        // dispatch(loginUserRequest({...user}));
 
         ws.current.send(JSON.stringify({
             type: 'CHECK_USER',
@@ -97,41 +95,42 @@ const Subscribe = () => {
 
     return (
         <Container component="section" maxWidth="xs">
-            <div className={classes.paper}>
-                <Typography component="h1" variant="h6">
-                    Subscription
-                </Typography>
-                <Grid
-                    component="form"
-                    container
-                    className={classes.form}
-                    onSubmit={subscribeFormHandler}
-                    spacing={2}
-                >
-                    <FormElement
-                        required
-                        type="text"
-                        autoComlete="current-email"
-                        label="Email"
-                        name="email"
-                        value={email}
-                        onChange={inputChangeHandler}
-                    />
+            <AppDrawer/>
+                <div className={classes.paper}>
+                    <Typography component="h1" variant="h6">
+                        Subscription
+                    </Typography>
+                    <Grid
+                        component="form"
+                        container
+                        className={classes.form}
+                        onSubmit={subscribeFormHandler}
+                        spacing={1}
+                    >
+                        <FormElement
+                            required
+                            type="text"
+                            autoComlete="current-email"
+                            label="Email"
+                            name="email"
+                            value={email}
+                            onChange={inputChangeHandler}
+                        />
 
-                    <Grid item xs={12}>
-                        <ButtonWithProgress
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            color="primary"
-                            className={classes.submit}
+                        <Grid item xs={12}>
+                            <ButtonWithProgress
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                color="primary"
+                                className={classes.submit}
 
-                        >
-                            find & Subscribe
-                        </ButtonWithProgress>
+                            >
+                                find & Subscribe
+                            </ButtonWithProgress>
+                        </Grid>
                     </Grid>
-                </Grid>
-            </div>
+                </div>
         </Container>
     );
 };

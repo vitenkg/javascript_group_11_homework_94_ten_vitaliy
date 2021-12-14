@@ -25,7 +25,13 @@ const App = () => {
           isAllowed={user}
           redirectTo="/login"
         />
-        <Route path="/subscribe" component={Subscribe}/>
+        <ProtectedRoute
+            path="/subscribe"
+            exact
+            component={Subscribe}
+            isAllowed={user}
+            redirectTo="/login"
+        />
         <Route path="/register" component={Register}/>
         <Route path="/login" component={Login}/>
       </Switch>

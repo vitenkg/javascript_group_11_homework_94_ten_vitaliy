@@ -6,12 +6,19 @@ const activeConnections = {};
 let activeUsers = [];
 
 
-const sendMessage = (user, type, message) => {
-    activeConnections[user.id].send(JSON.stringify({
+const sendPayload = (user, type, message) => {
+    activeConnections[user._id].send(JSON.stringify({
         type,
         payload: message,
     }));
 };
+
+// const sendMessage = (user, type, message) => {
+//     activeConnections[user._id].send(JSON.stringify({
+//         type,
+//         message,
+//     }));
+// };
 
 const userConnected = async (user, ws) => {
     activeConnections[user._id] = ws;
@@ -29,11 +36,19 @@ const userConnected = async (user, ws) => {
         const subscUsers = await Subscription.find({user: user._id})
             .populate('user subscriptionUser', 'displayName');
 
-        console.log('subsc: ', subscUsers);
+        const newUserSub = [];
+        subscUsers.map(q => {
+            q.subscriptionUser.map(user => {
+                newUserSub.push(user);
+            })
+        })
+
+        console.log('подписки ',subscUsers);
+        console.log('подписки ',newUserSub);
 
         ws.send(JSON.stringify({
             type: 'USER_CONNECTED',
-            payload: subscUsers[0].subscriptionUser,
+            payload: newUserSub,
         }));
 
     } catch (e) {
@@ -60,41 +75,54 @@ const userDisconnected = (user) => {
 
 const newSubscribe = async (parsed, user) => {
     try {
-        console.log('Пришедшие данные ', parsed);
         const findUser = await User.findOne({email: parsed.email})
-            .populate('user', 'displayName');
-
+        console.log('входные данные', findUser);
         if (!findUser || (JSON.stringify(user.id) === JSON.stringify(findUser._id))) {
-            activeConnections[user.id].send(JSON.stringify({
-                type: 'NO_USER',
-                message: 'User not found'
-            }));
+
+            sendPayload(user, 'NO_USER', 'User not found');
 
         } else {
 
-            const findSub = await Subscription.findOne({
+            const findSubUser = await Subscription.find({
                 $and: [
+                    {user: user._id},
                     {subscriptionUser: findUser._id},
-                    {user: user._id}
                 ]
             });
+            const findUserInSub = await Subscription.find({user: user._id});
 
+            console.log('проверка', findSubUser);
+            console.log('проверка пользователя с подписками', findUserInSub);
 
-            if (!findSub) {
-                const newSubscribe = {
-                    user: user.id,
-                    subscriptionUser: findUser._id,
-                };
+            if (findSubUser.length > 0) {
+                console.log('прошел findSunUser');
+                sendPayload(user, "SUBSCRIBE", `Вы уже подписаны на ${findUser.displayName}`);
 
-                const Sub = new Subscription(newSubscribe);
-                await Sub.save();
-
-                activeConnections[user.id].send(JSON.stringify({
-                    type: 'NEW_SUBSCRIBE',
-                    payload: findUser,
-                }));
             } else {
-                sendMessage(user, "SUBSCRIBE", `Вы уже подписаны на ${findUser.displayName}`);
+                console.log('не нашел findSunUser');
+
+                if (findUserInSub === []) {
+                    console.log('проверка на пользователя с подписаками');
+                    const add = await Subscription.findOneAndUpdate(
+                        { user: user._id },
+                        { $set: { subscriptionUser: [...findSubUser, findUser._id]}},
+                        {new: true},
+                    );
+                    console.log('Добавление в массив', add);
+                    sendPayload(user, "NEW_SUBSCRIBE", findUser);
+                } else {
+                    console.log('проверка на пользователя с подписаками, нет подписок вообще');
+
+                    const newSubscribe = {
+                        user: user._id,
+                        subscriptionUser: findUser._id,
+                    };
+
+                    const Sub = await new Subscription(newSubscribe);
+                    await Sub.save();
+                }
+
+                sendPayload(user, "NEW_SUBSCRIBE", findUser);
             }
 
         }
@@ -135,10 +163,12 @@ const Subscriptions = async (ws, req) => {
                 console.log('Delete: ', parsed.eventId);
                 await Subscription.findByIdAndDelete(parsed.eventId);
 
-                activeConnections[user._id].send(JSON.stringify({
-                    type: 'UNSUBSCRIBE',
-                    payload: parsed.eventId
-                }));
+                // activeConnections[user._id].send(JSON.stringify({
+                //     type: 'UNSUBSCRIBE',
+                //     payload: parsed.eventId
+                // }));
+                sendMessage(user, "UNSUBSCRIBE", parsed.eventId);
+
             }
         });
 

@@ -13,7 +13,7 @@ const MainPage = () => {
     const user = useSelector(state => state.users.user);
 
     useEffect(() => {
-        ws.current = new WebSocket('ws://localhost:8000/events?token=' + user.token);
+        ws.current = new ReconnectingWebSocket('ws://localhost:8000/events?token=' + user.token);
         ws.current.onclose = () => {
             console.log('ws connected close');
             dispatch({type: 'CLEAR_USERS'});

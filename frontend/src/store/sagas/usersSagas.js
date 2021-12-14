@@ -16,6 +16,7 @@ import {
     registerUserSuccess
 } from "../actions/usersActions";
 import {apiURL} from "../../config";
+import {eraseAllSub} from "../actions/subscribeActions";
 
 
 export function* registerUserSaga({payload: data}) {
@@ -84,6 +85,7 @@ export  function* loginOut({payload: data}) {
             },
         })
         yield put(logoutUser());
+        yield put(eraseAllSub());
         yield put(historyPush('/'));
     } catch (e) {
         toast.error(e.response.data.global);

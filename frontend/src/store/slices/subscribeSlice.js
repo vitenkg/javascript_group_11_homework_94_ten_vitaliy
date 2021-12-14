@@ -2,8 +2,7 @@ import {createSlice} from "@reduxjs/toolkit";
 
 export const initialState = {
     subscriptionUsers: [],
-    eventsUsers: null,
-
+    eventsUsers: [],
 };
 
 const name = 'subscribe';
@@ -16,9 +15,12 @@ const subscribeSlice = createSlice({
             state.subscriptionUsers = [...state.subscriptionUsers, action.payload];
         },
         userConnectedSub(state, action) {
-            console.log(action.payload);
-            state.subscriptionUsers = [...state.subscriptionUsers, action.payload];
+            state.subscriptionUsers = action.payload;
         },
+        eraseAllSub(state, action) {
+            state.subscriptionUsers = [];
+            state.eventsUsers = [];
+        }
     }
 });
 
