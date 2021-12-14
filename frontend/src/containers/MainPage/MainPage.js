@@ -21,7 +21,6 @@ const MainPage = () => {
 
         ws.current.onmessage = event => {
             const parsed = JSON.parse(event.data);
-            console.log(parsed);
 
             if (parsed.type === 'USER_CONNECTED') {
                 dispatch(userConnected(parsed.payload));
@@ -56,8 +55,6 @@ const MainPage = () => {
             eventId: id,
         }));
     };
-
-    console.log(eventsCalendar);
 
     return (
         <div>

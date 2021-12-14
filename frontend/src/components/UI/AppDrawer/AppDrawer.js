@@ -1,5 +1,6 @@
 import {Button, CssBaseline, Divider, Drawer, Grid, makeStyles, MenuItem, MenuList} from "@material-ui/core";
 import {useDispatch, useSelector} from "react-redux";
+import {eventsRequest} from "../../../store/actions/subscribeActions";
 
 const drawerWidth = 240;
 
@@ -15,15 +16,18 @@ const useStyles = makeStyles((theme) => ({
     drawerPaper: {
         width: drawerWidth,
     },
+    unsub: {
+        fontSize: 8,
+        margin: 0,
+    }
 }));
 
-const AppDrawer = () => {
+const AppDrawer = (id, onClick) => {
     const classes = useStyles();
     const dispatch = useDispatch();
     const usersSub = useSelector(state => state.subscribe.subscriptionUsers);
 
     let drawer = null;
-
 
     if (usersSub) {
         drawer = (
@@ -35,12 +39,13 @@ const AppDrawer = () => {
                         <Grid key={'grid' + name._id}>
                             <MenuItem
                                 key={name.id}
+                                onClick={() => {dispatch(eventsRequest(name._id))}}
                             >
                                 {name.displayName}
                                 <Button
 
                                 >
-                                    Unsubscribe
+                                    <p className={classes.unsub}>Unsubscribe</p>
                                 </Button>
                             </MenuItem>
                             <Divider key={'divider' + name._id}/>

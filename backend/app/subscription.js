@@ -1,6 +1,8 @@
 const User = require('../models/User');
 const Event = require("../models/Event");
 const Subscription = require('../models/Subscription');
+const events = require("events");
+const dayjs = require("dayjs");
 
 const activeConnections = {};
 let activeUsers = [];
@@ -12,13 +14,6 @@ const sendPayload = (user, type, message) => {
         payload: message,
     }));
 };
-
-// const sendMessage = (user, type, message) => {
-//     activeConnections[user._id].send(JSON.stringify({
-//         type,
-//         message,
-//     }));
-// };
 
 const userConnected = async (user, ws) => {
     activeConnections[user._id] = ws;
@@ -43,8 +38,8 @@ const userConnected = async (user, ws) => {
             })
         })
 
-        console.log('подписки ',subscUsers);
-        console.log('подписки ',newUserSub);
+        console.log('подписки ', subscUsers);
+        console.log('подписки ', newUserSub);
 
         ws.send(JSON.stringify({
             type: 'USER_CONNECTED',
@@ -104,8 +99,8 @@ const newSubscribe = async (parsed, user) => {
                 if (findUserInSub === []) {
                     console.log('проверка на пользователя с подписаками');
                     const add = await Subscription.findOneAndUpdate(
-                        { user: user._id },
-                        { $set: { subscriptionUser: [...findSubUser, findUser._id]}},
+                        {user: user._id},
+                        {$set: {subscriptionUser: [...findSubUser, findUser._id]}},
                         {new: true},
                     );
                     console.log('Добавление в массив', add);
@@ -127,6 +122,21 @@ const newSubscribe = async (parsed, user) => {
 
         }
 
+    } catch (e) {
+        console.log(e)
+    }
+
+    return;
+};
+
+const eventsSubUserRequest = async (parsed, user) => {
+    console.log(parsed);
+    try {
+        const events = await Event.find({user: parsed.id})
+            .populate('user', 'displayName')
+            .sort({datetime: -1});
+
+        sendPayload(user, 'SUB_EVENTS', events)
     } catch (e) {
         console.log(e)
     }
@@ -157,6 +167,11 @@ const Subscriptions = async (ws, req) => {
 
             if (parsed.type === 'CHECK_USER') {
                 await newSubscribe(parsed, user);
+            }
+
+            if (parsed.type === 'LOAD_EVENT_SUB_USER') {
+                console.log('запрос на закгрузку');
+                await eventsSubUserRequest(parsed, user);
             }
 
             if (parsed.type === 'UNSUBSCRIBE') {
